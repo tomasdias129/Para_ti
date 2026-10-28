@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💖</text></svg>">
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Uma pergunta para ti 💌</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --rosa: #ff6b9d;
+    --rosa-escuro: #e0457b;
+    --rosa-claro: #ffe3ee;
+    --creme: #fff8fb;
+    --texto: #5a2a40;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { min-height: 100%; }
+  body {
+    font-family: 'Nunito', sans-serif;
+    color: var(--texto);
+    background: linear-gradient(160deg, #ffd6e7 0%, #ffe9d6 50%, #ffd1e3 100%);
+    background-attachment: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    overflow-x: hidden;
+  }
+  .card {
+    position: relative;
+    background: var(--creme);
+    width: 100%;
+    max-width: 440px;
+    min-height: 380px;
+    border-radius: 28px;
+    padding: 32px 22px;
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(224, 69, 123, 0.25);
+    z-index: 2;
+    overflow: hidden;
+  }
+  .step { display: none; animation: entrar 0.6s ease; }
+  .step.ativo { display: block; }
+  @keyframes entrar {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  h1 {
+    font-family: 'Dancing Script', cursive;
+    font-size: 2.3rem;
+    color: var(--rosa-escuro);
+    margin-bottom: 14px;
+    line-height: 1.15;
+  }
+  p { font-size: 1.05rem; line-height: 1.55; margin-bottom: 16px; }
+  .emoji-grande { font-size: 3.2rem; margin-bottom: 8px; display: block; animation: bater 1.4s infinite; }
+  @keyframes bater {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+  }
+  button {
+    font-family: inherit;
+    font-size: 1.05rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 999px;
+    padding: 13px 28px;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  button:active { transform: scale(0.95); }
+  .btn-principal {
+    background: var(--rosa);
+    color: #fff;
+    box-shadow: 0 6px 16px rgba(255, 107, 157, 0.45);
+  }
+  .btn-principal:hover { background: var(--rosa-escuro); }
+  .btn-principal:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; }
+  .btn-secundario { background: #f1dfe7; color: var(--texto); }
+  .botoes {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    min-height: 120px;
+    margin-top: 10px;
+  }
+  #btnNao { position: relative; transition: transform 0.25s ease; }
+  label.titulo { display: block; font-weight: 700; margin: 16px 0 8px; }
+
+  /* Calendário */
+  .calendario {
+    background: #fff;
+    border: 2px solid var(--rosa-claro);
+    border-radius: 20px;
+    padding: 12px;
+    margin: 4px auto 0;
+    max-width: 340px;
+  }
+  .cal-topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .cal-topo .mes {
+    font-weight: 700;
+    font-size: 1.05rem;
+    text-transform: capitalize;
+  }
+  .cal-nav {
+    background: var(--rosa-claro);
+    color: var(--rosa-escuro);
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    font-size: 1.2rem;
+    line-height: 1;
+  }
+  .cal-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+  .cal-grelha {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+  }
+  .cal-sem {
+    font-size: 0.75rem;
+    font-weight: 700;
+    opacity: 0.6;
+    padding: 4px 0;
+    text-transform: uppercase;
+  }
+  .cal-dia {
+    aspect-ratio: 1;
+    padding: 0;
+    border-radius: 12px;
+    background: transparent;
+    color: var(--texto);
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+  .cal-dia:hover:not(:disabled):not(.sel) { background: var(--rosa-claro); }
+  .cal-dia.hoje { box-shadow: inset 0 0 0 2px var(--rosa-claro); }
+  .cal-dia.sel { background: var(--rosa); color: #fff; box-shadow: 0 4px 10px rgba(255,107,157,0.5); }
+  .cal-dia:disabled { opacity: 0.25; cursor: not-allowed; }
+  .cal-vazio { visibility: hidden; }
+  .data-escolhida {
+    margin-top: 10px;
+    font-weight: 700;
+    color: var(--rosa-escuro);
+    min-height: 1.4em;
+    text-transform: capitalize;
+  }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 6px; }
+  .chip {
+    background: #fff;
+    border: 2px solid var(--rosa-claro);
+    color: var(--texto);
+    padding: 9px 16px;
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+  .chip.sel { background: var(--rosa); border-color: var(--rosa); color: #fff; }
+  .resumo {
+    background: var(--rosa-claro);
+    border-radius: 16px;
+    padding: 14px 16px;
+    margin: 6px 0 18px;
+    font-weight: 600;
+    text-transform: capitalize;
+  }
+  .erro { color: #c0264f; font-weight: 700; margin-top: 12px; min-height: 1.2em; font-size: 0.95rem; }
+  .coracao-fundo {
+    position: fixed;
+    bottom: -40px;
+    pointer-events: none;
+    z-index: 1;
+    animation: subir linear forwards;
+    opacity: 0.8;
+  }
+  @keyframes subir {
+    to { transform: translateY(-110vh) rotate(25deg); opacity: 0; }
+  }
+  small { display: block; margin-top: 12px; opacity: 0.7; font-size: 0.85rem; }
+</style>
+</head>
+<body>
+
+<main class="card">
+
+  <!-- PASSO 1: Introdução -->
+  <section class="step ativo" id="passo1">
+    <span class="emoji-grande">💌</span>
+    <h1 id="saudacao">Olá!</h1>
+    <p>Tenho uma pergunta muito importante para te fazer…</p>
+    <button class="btn-principal" id="btnComecar">Diz lá 👀</button>
+  </section>
+
+  <!-- PASSO 2: A pergunta -->
+  <section class="step" id="passo2">
+    <span class="emoji-grande">🌾</span>
+    <h1>Vamo-nos ver?</h1>
+    <p>Prometo trazer boa disposição.</p>
+    <div class="botoes" id="zonaBotoes">
+      <button class="btn-principal" id="btnSim">Sim! 💖</button>
+      <button class="btn-secundario" id="btnNao">Não</button>
+    </div>
+  </section>
+
+  <!-- PASSO 3: Escolher o dia -->
+  <section class="step" id="passo3">
+    <h1>Que dia é bom para ti?</h1>
+
+    <div class="calendario">
+      <div class="cal-topo">
+        <button class="cal-nav" id="calAnterior" aria-label="Mês anterior">‹</button>
+        <span class="mes" id="calMes"></span>
+        <button class="cal-nav" id="calSeguinte" aria-label="Mês seguinte">›</button>
+      </div>
+      <div class="cal-grelha" id="calGrelha"></div>
+    </div>
+    <div class="data-escolhida" id="dataEscolhida"></div>
+
+    <label class="titulo">Em que altura do dia?</label>
+    <div class="chips" id="chipsMomento">
+      <button class="chip" data-v="de manhã">☀️ Manhã</button>
+      <button class="chip" data-v="à tarde">🌤️ Tarde</button>
+      <button class="chip" data-v="ao jantar">🌙 Jantar</button>
+      <button class="chip" data-v="Dia todo">☀️ Dia todo</button>
+    </div>
+
+    <label class="titulo">E o que gostavas de fazer?</label>
+    <div class="chips" id="chipsPlano">
+      <button class="chip" data-v="um passeio">🚶 Passeio</button>
+      <button class="chip" data-v="um café e conversa">☕ Café</button>
+      <button class="chip" data-v="um piquenique">🧺 Piquenique</button>
+      <button class="chip" data-v="uma surpresa">🎁 Surpresa</button>
+    </div>
+
+    <p></p>
+    <button class="btn-principal" id="btnConfirmar" disabled>Este dia! ✨</button>
+    <div class="erro" id="erro"></div>
+  </section>
+
+  <!-- PASSO 4: Final -->
+  <section class="step" id="passo4">
+    <span class="emoji-grande">🥰</span>
+    <h1>Combinado!</h1>
+    <div class="resumo" id="resumo"></div>
+    <p>Já ficou guardado, mal posso esperar por te ver 💗</p>
+  </section>
+
+</main>
+
+<script>
+  // ====== PERSONALIZA AQUI ======
+  const CONFIG = {
+    nomeDela: "Sarah",
+    supabaseUrl: "https://flqfhxembcecucwqhuqt.supabase.co",
+    supabaseAnonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZscWZoeGVtYmNlY3Vjd3FodXF0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyOTYwMTQsImV4cCI6MjA5NDg3MjAxNH0.yiAOPwL9iX01HeDCx_gqSXBpD8JGuqHaF3UphknfWs0"
+  };  
+  // ==============================
+
+  const $ = (id) => document.getElementById(id);
+  const passos = ["passo1", "passo2", "passo3", "passo4"];
+
+  function irPara(id) {
+    passos.forEach(p => $(p).classList.remove("ativo"));
+    $(id).classList.add("ativo");
+  }
+
+  $("saudacao").textContent = CONFIG.nomeDela ? `Olá, ${CONFIG.nomeDela}! 💕` : "Olá! 💕";
+
+  // Corações a subir no fundo
+  function criarCoracao() {
+    const c = document.createElement("div");
+    c.className = "coracao-fundo";
+    c.textContent = ["💗", "💖", "💕", "🌸", "💘"][Math.floor(Math.random() * 5)];
+    c.style.left = Math.random() * 100 + "vw";
+    c.style.fontSize = 14 + Math.random() * 26 + "px";
+    c.style.animationDuration = 6 + Math.random() * 6 + "s";
+    document.body.appendChild(c);
+    setTimeout(() => c.remove(), 12000);
+  }
+  setInterval(criarCoracao, 700);
+
+  $("btnComecar").addEventListener("click", () => irPara("passo2"));
+
+  // Botão "Não" que foge
+  let tentativas = 0;
+  const frases = ["Não", "Tens a certeza?", "Pensa melhor…", "Olha que fico triste 🥺", "Vá lá…", "Clica no Sim 😅"];
+  const btnNao = $("btnNao");
+
+  function fugir(e) {
+    e.preventDefault();
+    tentativas++;
+    btnNao.textContent = frases[Math.min(tentativas, frases.length - 1)];
+    const x = (Math.random() - 0.5) * 220;
+    const y = (Math.random() - 0.5) * 160;
+    const escala = Math.max(0.6, 1 - tentativas * 0.07);
+    btnNao.style.transform = `translate(${x}px, ${y}px) scale(${escala})`;
+    $("btnSim").style.transform = `scale(${1 + Math.min(tentativas * 0.08, 0.5)})`;
+  }
+  btnNao.addEventListener("mouseover", fugir);
+  btnNao.addEventListener("touchstart", fugir, { passive: false });
+  btnNao.addEventListener("click", fugir);
+
+  $("btnSim").addEventListener("click", () => {
+    for (let i = 0; i < 25; i++) setTimeout(criarCoracao, i * 60);
+    irPara("passo3");
+  });
+
+  // ====== CALENDÁRIO ======
+  const hoje = new Date();
+  hoje.setHours(0, 0, 0, 0);
+  let vistaAno = hoje.getFullYear();
+  let vistaMes = hoje.getMonth();
+  let diaEscolhido = null; // objeto Date
+
+  const MESES = ["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
+  const SEMANA = ["seg","ter","qua","qui","sex","sáb","dom"];
+
+  function paraISO(d) {
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const dia = String(d.getDate()).padStart(2, "0");
+    return `${d.getFullYear()}-${m}-${dia}`;
+  }
+
+  function formatarData(d) {
+    return d.toLocaleDateString("pt-PT", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+  }
+
+  function desenharCalendario() {
+    $("calMes").textContent = `${MESES[vistaMes]} ${vistaAno}`;
+    const grelha = $("calGrelha");
+    grelha.innerHTML = "";
+
+    SEMANA.forEach(s => {
+      const el = document.createElement("div");
+      el.className = "cal-sem";
+      el.textContent = s;
+      grelha.appendChild(el);
+    });
+
+    // Semana começa à segunda: getDay() 0=dom -> 6
+    const primeiro = new Date(vistaAno, vistaMes, 1);
+    const offset = (primeiro.getDay() + 6) % 7;
+    const diasNoMes = new Date(vistaAno, vistaMes + 1, 0).getDate();
+
+    for (let i = 0; i < offset; i++) {
+      const v = document.createElement("div");
+      v.className = "cal-vazio";
+      grelha.appendChild(v);
+    }
+
+    for (let d = 1; d <= diasNoMes; d++) {
+      const data = new Date(vistaAno, vistaMes, d);
+      const btn = document.createElement("button");
+      btn.className = "cal-dia";
+      btn.textContent = d;
+      if (data < hoje) btn.disabled = true;
+      if (data.getTime() === hoje.getTime()) btn.classList.add("hoje");
+      if (diaEscolhido && data.getTime() === diaEscolhido.getTime()) btn.classList.add("sel");
+      btn.addEventListener("click", () => {
+        diaEscolhido = data;
+        $("dataEscolhida").textContent = formatarData(data);
+        desenharCalendario();
+        validar();
+      });
+      grelha.appendChild(btn);
+    }
+
+    // Não deixa recuar para meses já passados
+    $("calAnterior").disabled = (vistaAno === hoje.getFullYear() && vistaMes === hoje.getMonth());
+  }
+
+  $("calAnterior").addEventListener("click", () => {
+    vistaMes--;
+    if (vistaMes < 0) { vistaMes = 11; vistaAno--; }
+    desenharCalendario();
+  });
+  $("calSeguinte").addEventListener("click", () => {
+    vistaMes++;
+    if (vistaMes > 11) { vistaMes = 0; vistaAno++; }
+    desenharCalendario();
+  });
+  desenharCalendario();
+
+  // ====== Chips ======
+  let momento = "", plano = "";
+
+  function configurarChips(containerId, setter) {
+    const chips = document.querySelectorAll(`#${containerId} .chip`);
+    chips.forEach(chip => {
+      chip.addEventListener("click", () => {
+        chips.forEach(c => c.classList.remove("sel"));
+        chip.classList.add("sel");
+        setter(chip.dataset.v);
+        validar();
+      });
+    });
+  }
+  configurarChips("chipsMomento", v => momento = v);
+  configurarChips("chipsPlano", v => plano = v);
+
+  function validar() {
+    $("btnConfirmar").disabled = !(diaEscolhido && momento && plano);
+  }
+
+  // ====== Guardar no Supabase (só inserção; só tu consegues ler) ======
+  async function guardar() {
+    if (!CONFIG.supabaseUrl || !CONFIG.supabaseAnonKey) {
+      throw new Error("Falta configurar o Supabase no CONFIG.");
+    }
+    const resp = await fetch(`${CONFIG.supabaseUrl}/rest/v1/visitas`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "apikey": CONFIG.supabaseAnonKey,
+        "Authorization": `Bearer ${CONFIG.supabaseAnonKey}`,
+        "Prefer": "return=minimal"
+      },
+      body: JSON.stringify({
+        dia: paraISO(diaEscolhido),
+        momento: momento,
+        plano: plano
+      })
+    });
+    if (!resp.ok) throw new Error("Erro ao guardar (" + resp.status + ")");
+  }
+
+  $("btnConfirmar").addEventListener("click", async () => {
+    const btn = $("btnConfirmar");
+    btn.disabled = true;
+    btn.textContent = "A guardar… 💞";
+    $("erro").textContent = "";
+    try {
+      await guardar();
+      $("resumo").textContent = `${formatarData(diaEscolhido)}, ${momento}, para ${plano} 💞`;
+      for (let i = 0; i < 40; i++) setTimeout(criarCoracao, i * 50);
+      irPara("passo4");
+    } catch (e) {
+      console.error(e);
+      $("erro").textContent = "Ups, algo correu mal. Tenta outra vez? 🥺";
+      btn.disabled = false;
+      btn.textContent = "Este dia! ✨";
+    }
+  });
+</script>
+</body>
+</html>
