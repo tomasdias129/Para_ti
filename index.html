@@ -311,7 +311,7 @@
   let tocando = false;
 
   function tocar() {
-    musica.volume = 0.3;
+    musica.volume = 0.2;
     musica.play()
       .then(() => { tocando = true; $("btnMusica").textContent = "🔊"; })
       .catch(() => {});
